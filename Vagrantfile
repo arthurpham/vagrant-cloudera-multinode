@@ -16,13 +16,14 @@ Vagrant.configure("2") do |config|
 
   # Use ubuntu precise
   config.vm.box = "precise64"
+  config.vm.box_url = "http://files.vagrantup.com/precise64.box"
 
   # Write hosts file
   config.vm.provision :shell, :inline => "echo \"#{hosts}\" | sudo tee -a /etc/hosts"
 
   # Manager
   config.vm.define :manager do |manager_config|
-    manager_config.vm.hostname = "hadoop-manager"
+    manager_config.vm.hostname = "hadoop-manager.cluster"
     manager_config.vm.network :forwarded_port, guest: 7180, host: 7180
     manager_config.vm.network :private_network, ip: "192.168.50.2"
     manager_config.vm.synced_folder "files/", "/home/vagrant/files"
@@ -38,7 +39,7 @@ Vagrant.configure("2") do |config|
   node_count.times do |i|
     id = i+1
     config.vm.define "node#{id}" do |node_config|
-      node_config.vm.hostname = "hadoop-node#{id}"
+      node_config.vm.hostname = "hadoop-node#{id}.cluster"
       node_config.vm.network :private_network, ip: "192.168.50.#{id+2}"
       node_config.vm.provider :virtualbox do |vb|
         # Use VBoxManage to customize the VM. For example to change memory:
